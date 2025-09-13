@@ -9969,3 +9969,151 @@ html {
     opacity: 0;
   }
 }
+
+@keyframes drawLine {
+  0% {
+    stroke-dashoffset: var(--path-length, 100);
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes drawLineFade {
+  0% {
+    stroke-dashoffset: var(--path-length, 100);
+    opacity: 0;
+  }
+  15% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  75% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes arrowFade {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Arrow animation that syncs with line drawing */
+@keyframes arrowSync {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Control marker opacity based on CSS custom property */
+.connection-svg path[marker-end] {
+  --marker-opacity: 0;
+}
+
+.connection-svg path[marker-end] marker path {
+  opacity: var(--marker-opacity, 0);
+}
+
+/* Ensure clean initial state - hide all lines and arrows initially */
+.connection-svg path {
+  opacity: 0;
+  stroke-dasharray: none;
+  stroke-dashoffset: 0;
+}
+
+.connection-svg path[marker-end] marker path {
+  opacity: 0;
+}
+
+/* Prevent flash during animation restart */
+.connection-svg {
+  opacity: 1;
+  transition: none;
+}
+
+/* Ensure smooth animation start without flash */
+.connection-svg path {
+  will-change: opacity, stroke-dashoffset;
+}
+
+/* Hide all elements initially to prevent flash */
+.connection-svg:not(.animation-started) path {
+  opacity: 0;
+}
+
+.connection-svg:not(.animation-started) path[marker-end] marker path {
+  opacity: 0;
+}
+
+/* Make arrows follow their parent path's opacity exactly */
+.connection-svg path[marker-end] marker path,
+svg path[marker-end] marker path {
+  opacity: var(--marker-opacity, 0);
+  animation: none;
+}
+
+/* Ensure arrows are controlled by the line animation */
+.connection-svg path[marker-end] {
+  animation: drawLineFade 6s ease-in-out infinite;
+}
+
+/* Arrows should follow the same timing as their parent paths but appear when line completes */
+.connection-svg path[marker-end] marker path {
+  animation: arrowSync 6s ease-in-out infinite;
+  animation-delay: inherit;
+}
+
+/* Override to make arrows appear exactly when line drawing completes */
+.connection-svg path[marker-end] marker path {
+  animation: arrowSync 6s ease-in-out infinite;
+  animation-delay: inherit;
+  animation-fill-mode: both;
+}
+
+/* Animate text values to sync with their respective arrows */
+.line-text-values text {
+  opacity: 0;
+  animation: textFade 8s ease-in-out infinite;
+  animation-delay: inherit;
+}
+
+/* Text animation that syncs with line drawing */
+@keyframes textFade {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+

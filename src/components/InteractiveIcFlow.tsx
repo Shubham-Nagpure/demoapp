@@ -44,7 +44,7 @@ function IconOutlineCheveronDownGray() {
   );
 }
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Filter53401401 from "../imports/Filter53401401";
 import PageHeader from "./PageHeader";
 import {
@@ -63,6 +63,7 @@ import {
 } from "lucide-react";
 import React from "react";
 import { cn } from "./ui/utils";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 
 type StateOption = "Current" | "Future" | "Side by side";
 type FeeOption =
@@ -111,6 +112,145 @@ export default function InteractiveIcFlow({
   const [selectedFee, setSelectedFee] = useState<FeeOption>("All Fees");
   const [isFeeDropdownOpen, setIsFeeDropdownOpen] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
+  const connectionSvgRef = useRef<SVGSVGElement>(null);
+
+  // Line flow animation using Anime.js
+  useEffect(() => {
+    const animatePaths = () => {
+      // Check if anime is available and SVG ref is ready
+      if (typeof window !== 'undefined' && (window as any).anime && connectionSvgRef.current) {
+        const anime = (window as any).anime;
+        
+        // Find all path elements within the connection SVG
+        const paths = connectionSvgRef.current.querySelectorAll('path');
+        
+        if (paths.length > 0) {
+          // Set initial state for all paths - ensure they start hidden
+          paths.forEach((path: any, index: number) => {
+            const length = path.getTotalLength();
+            path.style.strokeDasharray = `${length} ${length}`;
+            path.style.strokeDashoffset = length;
+            path.style.setProperty('--path-length', length.toString());
+            // Let CSS animation handle opacity
+            path.style.animation = `drawLineFade 6s ease-in-out infinite`;
+            path.style.animationDelay = `${index * 0.3}s`;
+            
+            // Hide static markers initially
+            path.style.setProperty('--marker-opacity', '0');
+            const markerId = path.getAttribute('marker-end');
+            if (markerId) {
+              const cleanMarkerId = markerId.replace('url(#', '#').replace(')', '');
+              const marker = document.querySelector(cleanMarkerId);
+              if (marker) {
+                (marker as any).style.opacity = '0';
+                // Arrow animation is handled by CSS
+                const markerPath = marker.querySelector('path');
+                if (markerPath) {
+                  // Remove any inline animation styles to let CSS handle it
+                  markerPath.style.animation = '';
+                  markerPath.style.animationDelay = '';
+                }
+                // Debug: log initial marker setup
+                if (index < 3) {
+                  console.log(`Initial setup - Path ${index}: Found marker ${cleanMarkerId}`);
+                }
+              } else {
+                // Debug: log missing markers in setup
+                if (index < 3) {
+                  console.log(`Initial setup - Path ${index}: Marker not found for ${cleanMarkerId}`);
+                }
+              }
+            }
+            
+            // Create a moving arrow element for each path
+            const arrowId = `moving-arrow-${index}`;
+            const pathId = `path-${index}`;
+            path.id = pathId;
+            
+            // Create a circle element that will move along the path
+            const movingArrow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            movingArrow.id = arrowId;
+            movingArrow.setAttribute('r', '0.3');
+            movingArrow.setAttribute('fill', path.getAttribute('stroke') || '#2563eb');
+            movingArrow.setAttribute('opacity', '0');
+            movingArrow.style.transition = 'opacity 0.2s ease';
+            
+            // Insert the moving arrow after the path
+            path.parentNode.insertBefore(movingArrow, path.nextSibling);
+          });
+          
+          // Add class to indicate animation has started
+          if (connectionSvgRef.current) {
+            connectionSvgRef.current.classList.add('animation-started');
+          }
+          
+          // Apply animation delays to text elements to match their corresponding arrows
+          setTimeout(() => {
+            const textElements = document.querySelectorAll('.line-text-values text');
+            textElements.forEach((textElement: any, index: number) => {
+              textElement.style.animation = `textFade 6s ease-in-out infinite`;
+              textElement.style.animationDelay = `${index * 0.3}s`;
+            });
+          }, 100);
+        } else {
+          // Retry after a short delay if paths aren't found
+          setTimeout(animatePaths, 200);
+        }
+      } else {
+        // Retry after a short delay
+        setTimeout(animatePaths, 200);
+      }
+    };
+
+    // Alternative CSS animation approach as fallback
+    const animateWithCSS = () => {
+      if (connectionSvgRef.current) {
+        // Add class to indicate animation has started
+        connectionSvgRef.current.classList.add('animation-started');
+        
+        const paths = connectionSvgRef.current.querySelectorAll('path');
+        paths.forEach((path: any, index: number) => {
+          const length = path.getTotalLength();
+          path.style.strokeDasharray = `${length} ${length}`;
+          path.style.strokeDashoffset = length;
+          path.style.opacity = '0'; // Start hidden
+          path.style.setProperty('--path-length', length.toString());
+          path.style.animation = `drawLineFade 6s ease-in-out infinite`;
+          path.style.animationDelay = `${index * 0.3}s`;
+          
+          // Apply synchronized arrow animation to markers
+          const markerId = path.getAttribute('marker-end');
+          if (markerId) {
+            const cleanMarkerId = markerId.replace('url(#', '#').replace(')', '');
+            const marker = document.querySelector(cleanMarkerId);
+            if (marker) {
+              const markerPath = marker.querySelector('path');
+              // Arrows controlled by --marker-opacity property
+            }
+          }
+        });
+        
+        // Apply animation delays to text elements to match their corresponding arrows
+        setTimeout(() => {
+          const textElements = document.querySelectorAll('.line-text-values text');
+          textElements.forEach((textElement: any, index: number) => {
+            textElement.style.animation = `textFade 6s ease-in-out infinite`;
+            textElement.style.animationDelay = `${index * 0.3}s`;
+          });
+        }, 100);
+      }
+    };
+
+    // Try Anime.js first, then fallback to CSS
+    // Add a small delay to ensure initial state is set
+    const timer1 = setTimeout(animatePaths, 100);
+    const timer2 = setTimeout(animateWithCSS, 1500);
+    
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
+  }, []);
 
   // Financial amounts for each entity based on transfer pricing flows
   const getEntityAmount = (entityId: string): string => {
@@ -311,7 +451,7 @@ export default function InteractiveIcFlow({
     setZoomLevel(1);
   };
 
-  function lineBetweenNodes(x1, y1, x2, y2, r1, r2, curveOffset = 10) {
+  function lineBetweenNodes(x1, y1, x2, y2, r1, r2, curveOffset = 25) {
     const dx = x2 - x1;
     const dy = y2 - y1;
     const len = Math.sqrt(dx * dx + dy * dy);
@@ -338,7 +478,7 @@ export default function InteractiveIcFlow({
   }
 
   // Example: US HQ (25,40,r=3) → Irish IPCo (52,32,r=3)
-  const pathD = lineBetweenNodes(24, 40, 53, 32, 3, 3, 1);
+  const pathD = lineBetweenNodes(25, 40, 52, 32, 3, 3, 25);
 
   return (
     <div className="flex-1 bg-white overflow-auto">
@@ -501,7 +641,7 @@ export default function InteractiveIcFlow({
 
           {/* Ultra Modern Animated Connection Lines SVG */}
           <svg
-            className="absolute inset-0 w-full h-full pointer-events-none"
+            className="absolute inset-0 w-full h-full pointer-events-none line-text-values"
             style={{ zIndex: 5 }}
           >
             <defs>
@@ -661,17 +801,6 @@ export default function InteractiveIcFlow({
               >
                 <path d="M2,2 L2,10 L10,6 z" fill="#ea580c" stroke="none" />
               </marker>
-              <marker
-                id="arrow-green-solid"
-                markerWidth="12"
-                markerHeight="12"
-                refX="10"
-                refY="6"
-                orient="auto"
-                markerUnits="strokeWidth"
-              >
-                <path d="M2,2 L2,10 L10,6 z" fill="#059669" stroke="none" />
-              </marker>
 
               {/* Flow particles animation */}
               <circle id="particle" r="2" fill="white" opacity="0.8">
@@ -773,100 +902,15 @@ export default function InteractiveIcFlow({
                 `}
               </style>
             </defs>
-
-            {/* License Fee: US HQ to Irish IPCo - Solid Blue Line ($3.2B) */}
-            {(selectedFee === "All Fees" || selectedFee === "License") && (
-              <path
-                d="M 25% 40% Q 35% 35% 52% 32%"
-                stroke="#2563eb"
-                strokeWidth="5"
-                fill="none"
-                markerEnd="url(#arrow-blue-solid)"
-                opacity={selectedFee === "License" ? 1 : 0.8}
-              />
-            )}
-
-            {/* Sub-license Fee: Irish IPCo to China Mfg - Solid Purple Line ($850M) */}
-            {(selectedFee === "All Fees" || selectedFee === "Sub-license") && (
-              <path
-                d="M 52% 32% Q 60% 35% 70% 42%"
-                stroke="#7c3aed"
-                strokeWidth="4"
-                fill="none"
-                markerEnd="url(#arrow-purple-solid)"
-                opacity={selectedFee === "Sub-license" ? 1 : 0.8}
-              />
-            )}
-
-            {/* Sub-license Fee: Irish IPCo to Singapore Mfg - Solid Purple Line ($1.1B) */}
-            {(selectedFee === "All Fees" || selectedFee === "Sub-license") && (
-              <path
-                d="M 52% 32% Q 65% 45% 75% 55%"
-                stroke="#7c3aed"
-                strokeWidth="4"
-                fill="none"
-                markerEnd="url(#arrow-purple-solid)"
-                opacity={selectedFee === "Sub-license" ? 1 : 0.8}
-              />
-            )}
-
-            {/* Management Fee: US HQ to Japan Distr - Solid Orange Line ($420M) */}
-            {(selectedFee === "All Fees" || selectedFee === "Management") && (
-              <path
-                d="M 25% 40% Q 55% 35% 82% 42%"
-                stroke="#ea580c"
-                strokeWidth="3"
-                fill="none"
-                markerEnd="url(#arrow-orange-solid)"
-                opacity={selectedFee === "Management" ? 1 : 0.8}
-              />
-            )}
-
-            {/* Management Fee: US HQ to Australia Distr - Solid Orange Line ($380M) */}
-            {(selectedFee === "All Fees" || selectedFee === "Management") && (
-              <path
-                d="M 25% 40% Q 50% 60% 80% 75%"
-                stroke="#ea580c"
-                strokeWidth="3"
-                fill="none"
-                markerEnd="url(#arrow-orange-solid)"
-                opacity={selectedFee === "Management" ? 1 : 0.8}
-              />
-            )}
-
-            {/* Resale minus Fee: Singapore Mfg to UK Distr - Solid Green Line ($2.8B) */}
-            {(selectedFee === "All Fees" || selectedFee === "Resale Minus") && (
-              <path
-                d="M 75% 55% Q 65% 40% 48% 28%"
-                stroke="#059669"
-                strokeWidth="5"
-                fill="none"
-                markerEnd="url(#arrow-green-solid)"
-                opacity={selectedFee === "Resale Minus" ? 1 : 0.8}
-              />
-            )}
-
-            {/* Resale minus Fee: Singapore Mfg to Australia Distr - Solid Green Line ($1.6B) */}
-            {(selectedFee === "All Fees" || selectedFee === "Resale Minus") && (
-              <path
-                d="M 75% 55% Q 78% 65% 80% 75%"
-                stroke="#059669"
-                strokeWidth="4"
-                fill="none"
-                markerEnd="url(#arrow-green-solid)"
-                opacity={selectedFee === "Resale Minus" ? 1 : 0.8}
-              />
-            )}
-
             {/* Flow amount labels */}
-            <g>
+            <g style={{ display: "none" }}>
               {/* License Fee: US HQ to Irish IPCo */}
               {(selectedFee === "All Fees" || selectedFee === "License") && (
                 <text
                   x="38%"
                   y="34%"
                   fill="#2563eb"
-                  fontSize="11"
+                  fontSize="10"
                   fontWeight="700"
                   textAnchor="middle"
                 >
@@ -881,7 +925,7 @@ export default function InteractiveIcFlow({
                   x="60%"
                   y="36%"
                   fill="#7c3aed"
-                  fontSize="9"
+                  fontSize="10"
                   fontWeight="600"
                   textAnchor="middle"
                 >
@@ -896,7 +940,7 @@ export default function InteractiveIcFlow({
                   x="64%"
                   y="44%"
                   fill="#7c3aed"
-                  fontSize="9"
+                  fontSize="10"
                   fontWeight="600"
                   textAnchor="middle"
                 >
@@ -907,10 +951,10 @@ export default function InteractiveIcFlow({
               {/* Management Fee: US HQ to Japan Distr */}
               {(selectedFee === "All Fees" || selectedFee === "Management") && (
                 <text
-                  x="55%"
+                  x="57%"
                   y="40%"
                   fill="#ea580c"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="600"
                   textAnchor="middle"
                 >
@@ -924,7 +968,7 @@ export default function InteractiveIcFlow({
                   x="52%"
                   y="58%"
                   fill="#ea580c"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="600"
                   textAnchor="middle"
                 >
@@ -965,7 +1009,8 @@ export default function InteractiveIcFlow({
           </svg>
 
           <svg
-            className="absolute inset-0 w-full h-full pointer-events-none"
+            ref={connectionSvgRef}
+            className="absolute inset-0 w-full h-full pointer-events-none connection-svg"
             style={{ zIndex: 11 }}
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
@@ -974,54 +1019,43 @@ export default function InteractiveIcFlow({
               {/* Black arrow */}
               <marker
                 id="arrow-purple"
-                markerWidth="1"
-                markerHeight="1"
-                refX="0.8"
-                refY="0.5"
+                markerWidth="12"
+                markerHeight="12"
+                refX="10"
+                refY="6"
                 orient="auto"
-                markerUnits="userSpaceOnUse"
+                markerUnits="strokeWidth"
               >
-                <path d="M0,0 L0,1 L0.8,0.5 z" fill="#a855f7" />
+                <path d="M2,2 L2,10 L10,6 z" fill="#a855f7" />
               </marker>
-              {/* Blue arrow */}
-              <marker
-                id="arrow-blue-solid"
-                markerWidth="1"
-                markerHeight="1"
-                refX="0.8"
-                refY="0.5"
-                orient="auto"
-                markerUnits="userSpaceOnUse"
-              >
-                <path d="M0,0 L0,1 L0.8,0.5 z" fill="#2563eb" />
-              </marker>
+              {/* Blue arrow - using the main definition above */}
               {/* Orange arrow */}
               <marker
                 id="arrow-orange"
-                markerWidth="1"
-                markerHeight="1"
-                refX="0.8"
-                refY="0.5"
+                markerWidth="12"
+                markerHeight="12"
+                refX="10"
+                refY="6"
                 orient="auto"
-                markerUnits="userSpaceOnUse"
+                markerUnits="strokeWidth"
               >
-                <path d="M0,0 L0,1 L0.8,0.5 z" fill="#ea580c" />
+                <path d="M2,2 L2,10 L10,6 z" fill="#ea580c" />
               </marker>
               {/* Green arrow */}
               <marker
                 id="arrow-green"
-                markerWidth="1"
-                markerHeight="1"
-                refX="0.8"
-                refY="0.5"
+                markerWidth="12"
+                markerHeight="12"
+                refX="10"
+                refY="6"
                 orient="auto"
-                markerUnits="userSpaceOnUse"
+                markerUnits="strokeWidth"
               >
-                <path d="M0,0 L0,1 L0.8,0.5 z" fill="#059669" />
+                <path d="M2,2 L2,10 L10,6 z" fill="#059669" stroke="none" />
               </marker>
             </defs>
             <path
-              d="M 52 32 Q 40 36 27 40"
+              d="M 52 32 Q 38 15 25 40"
               stroke="#2563eb"
               strokeWidth="0.2"
               fill="none"
@@ -1029,7 +1063,7 @@ export default function InteractiveIcFlow({
             />
             {/* China → IPCo */}
             <path
-              d="M 69 42 Q 61 38 53 32"
+              d="M 70 42 Q 75 20 52 32"
               stroke="#a855f7"
               strokeWidth="0.2"
               fill="none"
@@ -1037,7 +1071,7 @@ export default function InteractiveIcFlow({
             />
             {/* SG → IPCo */}
             <path
-              d="M 74 55 Q 63 45 53 32"
+              d="M 75 55 Q 80 25 52 32"
               stroke="#a855f7"
               strokeWidth="0.2"
               fill="none"
@@ -1045,28 +1079,28 @@ export default function InteractiveIcFlow({
             />
             {/* Management Fees: HQ → China, SG, Japan, UK, Australia */}
             <path
-              d="M 26 40 Q 35 30 46 28"
+              d="M 25 40 Q 20 10 48 28"
               stroke="#ea580c"
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-orange)"
             />
             <path
-              d="M 26 40 Q 35 35 50 32"
+              d="M 25 40 Q 20 15 52 32"
               stroke="#ea580c"
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-orange)"
             />
             <path
-              d="M 26 40 Q 55 35 80 42"
+              d="M 25 40 Q 50 5 82 42"
               stroke="#ea580c"
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-orange)"
             />
             <path
-              d="M 26 40 Q 50 60 78 75"
+              d="M 25 40 Q 50 90 80 75"
               stroke="#ea580c"
               strokeWidth="0.2"
               fill="none"
@@ -1074,7 +1108,7 @@ export default function InteractiveIcFlow({
             />
             {/* USHQ → China */}
             <path
-              d="M 26 40 Q 40 42 68 45"
+              d="M 25 40 Q 50 60 70 42"
               stroke="#ea580c"
               strokeWidth="0.2"
               fill="none"
@@ -1082,7 +1116,7 @@ export default function InteractiveIcFlow({
             />
             {/* USHQ → SG */}
             <path
-              d="M 26 40 Q 35 50 73 55"
+              d="M 25 40 Q 50 70 75 55"
               stroke="#ea580c"
               strokeWidth="0.2"
               fill="none"
@@ -1090,21 +1124,21 @@ export default function InteractiveIcFlow({
             />
             {/* Resale Minus: Mfg → Distr */}
             <path
-              d="M 75 52 Q 65 40 50 28"
+              d="M 75 55 Q 50 5 48 28"
               stroke="#059669"
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-green)"
             />
             <path
-              d="M 76 57 Q 78 63 80 72"
+              d="M 75 55 Q 85 85 80 75"
               stroke="#059669"
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-green)"
             />
             <path
-              d="M 76 57 Q 82 50 82 46"
+              d="M 75 55 Q 85 25 82 42"
               stroke="#059669"
               strokeWidth="0.2"
               fill="none"
@@ -1165,76 +1199,75 @@ export default function InteractiveIcFlow({
             };
 
             return (
-              <div
-                key={entity.id}
-                className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
-                style={{ top: position.top, left: position.left, zIndex: 10 }}
-              >
-                {/* Entity bubble with financial data */}
-                <div className="flex flex-col items-center space-y-2">
-                  {/* Financial Amount */}
-                  <div className="bg-white/95 backdrop-blur-sm px-3 py-1 rounded-full shadow-lg border border-white/20">
-                    <span className="text-sm font-semibold text-gray-800">
-                      ${getEntityAmount(entity.id)}
-                    </span>
-                  </div>
-
-                  {/* Entity bubble */}
+              <HoverCard key={entity.id}>
+                <HoverCardTrigger asChild>
                   <div
-                    className={`${bubbleSize} rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 flex items-center justify-center relative backdrop-blur-sm`}
-                    style={{
-                      backgroundColor: bubbleColor,
-                      border: "4px solid white",
-                      boxShadow: `0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.1)`,
-                      // Make bubble semi-transparent so lines can be seen passing through
-                      opacity: 0.92,
-                    }}
+                    className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
+                    style={{ top: position.top, left: position.left, zIndex: 10 }}
                   >
-                    <IconComponent className="w-6 h-6 text-white" />
+                    {/* Entity bubble with financial data */}
+                    <div className="flex flex-col items-center space-y-2">
+                      {/* Financial Amount */}
+                      <div className="bg-white/95 backdrop-blur-sm px-3 py-1 rounded-full shadow-lg border border-white/20">
+                        <span className="text-sm font-semibold text-gray-800">
+                          ${getEntityAmount(entity.id)}
+                        </span>
+                      </div>
 
-                    {/* Subtle pulse ring */}
-                    <div
-                      className="absolute inset-0 rounded-full animate-ping opacity-15"
-                      style={{
-                        backgroundColor: bubbleColor,
-                        animationDuration: "4s",
-                        animationIterationCount: "infinite",
-                      }}
-                    />
+                      {/* Entity bubble */}
+                      <div
+                        className={`${bubbleSize} rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 flex items-center justify-center relative backdrop-blur-sm`}
+                        style={{
+                          backgroundColor: bubbleColor,
+                          border: "4px solid white",
+                          boxShadow: `0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.1)`,
+                          // Make bubble semi-transparent so lines can be seen passing through
+                          opacity: 0.92,
+                        }}
+                      >
+                        <IconComponent className="w-6 h-6 text-white" />
+
+                        {/* Subtle pulse ring */}
+                        <div
+                          className="absolute inset-0 rounded-full animate-ping opacity-15"
+                          style={{
+                            backgroundColor: bubbleColor,
+                            animationDuration: "4s",
+                            animationIterationCount: "infinite",
+                          }}
+                        />
+                      </div>
+
+                      {/* Entity name */}
+                      <div className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg shadow-sm border border-white/20">
+                        <span className="text-xs font-medium text-gray-700">
+                          {entity.name}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-
-                  {/* Entity name */}
-                  <div className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg shadow-sm border border-white/20">
-                    <span className="text-xs font-medium text-gray-700">
-                      {entity.name}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Hover tooltip */}
-                <div
-                  className={cn(
-                    "absolute left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200",
-                    entity.tooltip === "top" ? "top-full" : "bottom-full"
-                  )}
-                  style={{ marginTop: "7px", zIndex: "9999" }}
+                </HoverCardTrigger>
+                
+                <HoverCardContent 
+                  side={entity.tooltip === "top" ? "top" : "bottom"}
+                  className="w-80 p-4 bg-white/95 backdrop-blur-sm border border-gray-200 shadow-xl"
                 >
-                  <div className="bg-white/95 backdrop-blur-sm text-gray-900 px-4 py-3 rounded-lg shadow-xl border border-gray-200 text-sm whitespace-nowrap min-w-[200px]">
-                    <div className="font-semibold text-gray-900 mb-1">
+                  <div className="space-y-3">
+                    <div className="font-semibold text-gray-900 text-lg">
                       {entity.name}
                     </div>
-                    <div className="text-xs text-gray-600 mb-2">
+                    <div className="text-sm text-gray-600">
                       {entity.type} • {entity.region}
                     </div>
-                    <div className="text-xs space-y-1">
-                      <div>
-                        Revenue:{" "}
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Revenue:</span>
                         <span className="font-medium text-green-600">
                           {entity.revenue}
                         </span>
                       </div>
-                      <div>
-                        Total Outflows:{" "}
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Total Outflows:</span>
                         <span className="font-medium text-blue-600">
                           {entity.outgoingPayments?.reduce(
                             (sum, payment) =>
@@ -1246,23 +1279,36 @@ export default function InteractiveIcFlow({
                         </span>
                       </div>
                     </div>
-                    {/* Tooltip arrow */}
-                    <div
-                      className={cn(
-                        "absolute left-1/2 transform -translate-x-1/2",
-                        entity.tooltip === "top" ? "bottom-full" : "top-full"
-                      )}
-                    >
-                      <div className="border-4 border-transparent border-t-white/95"></div>
-                    </div>
+                    
+                    {/* Additional entity details */}
+                    {entity.outgoingPayments && entity.outgoingPayments.length > 0 && (
+                      <div className="pt-3 border-t border-gray-200">
+                        <div className="text-xs font-medium text-gray-700 mb-2">
+                          Outgoing Payments:
+                        </div>
+                        <div className="space-y-1">
+                          {entity.outgoingPayments.slice(0, 3).map((payment, index) => (
+                            <div key={index} className="flex justify-between text-xs">
+                              <span className="text-gray-600">{payment.recipient}</span>
+                              <span className="font-medium text-blue-600">{payment.amount}</span>
+                            </div>
+                          ))}
+                          {entity.outgoingPayments.length > 3 && (
+                            <div className="text-xs text-gray-500">
+                              +{entity.outgoingPayments.length - 3} more...
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              </div>
+                </HoverCardContent>
+              </HoverCard>
             );
           })}
 
           {/* Entity Type Legend */}
-          <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl border border-white/20 min-w-[200px]">
+          <div className="absolute bottom-4 left-4 bg-white rounded-xl p-4 shadow-xl border border-white/20 min-w-[200px]">
             <div className="text-xs font-medium text-gray-700 mb-3">
               Entity Types
             </div>
@@ -1321,39 +1367,39 @@ export default function InteractiveIcFlow({
           </div>
 
           {/* Flow Types Legend */}
-          <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl border border-white/20 min-w-[220px]">
+          <div className="absolute top-4 left-4 bg-white  rounded-xl p-4 shadow-xl border border-white/20 min-w-[200px]">
             <div className="text-xs font-medium text-gray-700 mb-3">
               Intercompany Flow Types
             </div>
             <div className="space-y-3">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-1 bg-blue-600 shadow-sm"></div>
-                <span className="text-xs text-gray-600 font-medium">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-1 bg-blue-600 shadow-sm rounded"></div>
+                <span className="text-xs text-gray-600">
                   License Fee
                 </span>
               </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-1 bg-purple-600 shadow-sm"></div>
-                <span className="text-xs text-gray-600 font-medium">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-1 bg-purple-600 shadow-sm rounded"></div>
+                <span className="text-xs text-gray-600">
                   Sub-license Fee
                 </span>
               </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-1 bg-orange-600 shadow-sm"></div>
-                <span className="text-xs text-gray-600 font-medium">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-1 bg-orange-600 shadow-sm rounded"></div>
+                <span className="text-xs text-gray-600">
                   Management Fee
                 </span>
               </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-1 bg-emerald-600 shadow-sm"></div>
-                <span className="text-xs text-gray-600 font-medium">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-1 bg-emerald-600 shadow-sm rounded"></div>
+                <span className="text-xs text-gray-600">
                   Resale minus Fee
                 </span>
               </div>
             </div>
             <div className="border-t border-gray-200 mt-4 pt-3">
               <div className="text-xl font-bold text-gray-900">$12.6B</div>
-              <div className="text-xs text-gray-600">Total Annual Flows</div>
+              <div className="text-xs font-semibold text-gray-900">Total Annual Flows</div>
             </div>
           </div>
         </div>
