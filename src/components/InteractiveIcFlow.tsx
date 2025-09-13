@@ -29,6 +29,10 @@ import futureStateImage from 'figma:asset/b66513ffcf77068f7303fff66710d2cb640930
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription, DialogHeader } from "./ui/dialog";
 import PageHeader from "./PageHeader";
 import { Building2, MapPin, DollarSign, ArrowUpRight, ArrowDownRight, CreditCard, TrendingUp, CheckCircle, XCircle, ChevronLeft, ChevronRight, BarChart3 } from 'lucide-react';
+import React from 'react';
+import { cn } from './ui/utils';
+
+
 
 type StateOption = 'Current' | 'Future' | 'Side by side';
 type FeeOption = 'All Fees' | 'License' | 'Sub-license' | 'Management' | 'Resale Minus';
@@ -39,6 +43,7 @@ interface EntityData {
   type: string;
   region: string;
   revenue: string;
+  tooltip: string;
   outgoingPayments?: Array<{
     description: string;
     recipient: string;
@@ -95,6 +100,7 @@ export default function InteractiveIcFlow({ onSideBySideChange }: InteractiveIcF
       type: 'Headquarters',
       region: 'Americas',
       revenue: '$2100M',
+      tooltip: 'top',
       outgoingPayments: [
         {
           description: 'License Fee',
@@ -109,6 +115,7 @@ export default function InteractiveIcFlow({ onSideBySideChange }: InteractiveIcF
       type: 'IP Holding Company',
       region: 'Europe',
       revenue: '$2100M',
+      tooltip: 'top',
       incomingPayments: [
         {
           description: 'License Fee',
@@ -150,6 +157,7 @@ export default function InteractiveIcFlow({ onSideBySideChange }: InteractiveIcF
       type: 'Manufacturing',
       region: 'Asia Pacific',
       revenue: '$2100M',
+      tooltip: 'top',
       incomingPayments: [
         {
           description: 'Service Fee',
@@ -164,6 +172,7 @@ export default function InteractiveIcFlow({ onSideBySideChange }: InteractiveIcF
       type: 'Manufacturing',
       region: 'Asia Pacific',
       revenue: '$2100M',
+      tooltip: 'top',
       incomingPayments: [
         {
           description: 'Service Fee',
@@ -178,6 +187,7 @@ export default function InteractiveIcFlow({ onSideBySideChange }: InteractiveIcF
       type: 'Distribution',
       region: 'Asia Pacific',
       revenue: '$2100M',
+      tooltip: 'top',
       incomingPayments: [
         {
           description: 'Distribution Fee',
@@ -192,6 +202,7 @@ export default function InteractiveIcFlow({ onSideBySideChange }: InteractiveIcF
       type: 'Distribution',
       region: 'Europe',
       revenue: '$2100M',
+      tooltip: 'top',
       incomingPayments: [
         {
           description: 'Distribution Fee',
@@ -206,6 +217,7 @@ export default function InteractiveIcFlow({ onSideBySideChange }: InteractiveIcF
       type: 'Distribution',
       region: 'Asia Pacific',
       revenue: '$2100M',
+      tooltip: 'bottom',
       incomingPayments: [
         {
           description: 'Distribution Fee',
@@ -215,6 +227,7 @@ export default function InteractiveIcFlow({ onSideBySideChange }: InteractiveIcF
       ]
     }
   ];
+  
 
   // Approximate positions for hover areas based on the new diagram
   const entityPositions: EntityPosition[] = [
@@ -380,9 +393,10 @@ export default function InteractiveIcFlow({ onSideBySideChange }: InteractiveIcF
           {/* World map background */}
           <div className="absolute inset-0">
             <div 
-              className="absolute inset-0 w-full h-full opacity-20"
+              className="absolute inset-0 w-full h-full"
               style={{
-                backgroundImage: `url('https://images.unsplash.com/photo-1742415105376-43d3a5fd03fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx8fDE3NTc0OTgyNTh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral')`,
+                // backgroundImage: `url('https://images.unsplash.com/photo-1742415105376-43d3a5fd03fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx8fDE3NTc0OTgyNTh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral')`,
+                backgroundImage: `url("src/assets/blue-map-world-with-word-world-it.jpg")`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat'
@@ -722,18 +736,18 @@ export default function InteractiveIcFlow({ onSideBySideChange }: InteractiveIcF
             };
 
             const IconComponent = getEntityTypeIcon(entity.type);
-            const bubbleSize = 'w-12 h-12'; // Bigger bubbles for better visibility
+            const bubbleSize = 'w-16 h-16'; // Bigger bubbles for better visibility
             const bubbleColor = getEntityTypeColor(entity.type);
 
             // Use approximate positions based on entity locations
             const positions = {
-              'us-hq': { top: '40%', left: '25%' },
-              'irish-ipco': { top: '32%', left: '52%' },
-              'singapore-mfg': { top: '55%', left: '75%' },
-              'japan-distr': { top: '42%', left: '82%' },
-              'australia-distr': { top: '75%', left: '80%' },
-              'uk-distr': { top: '28%', left: '48%' },
-              'china-mg': { top: '42%', left: '70%' }
+              'us-hq': { top: '35%', left: '21%' },
+              'irish-ipco': { top: '22%', left: '43%' },
+              'singapore-mfg': { top: '63%', left: '73%' },
+              'japan-distr': { top: '40%', left: '82%' },
+              'australia-distr': { top: '80%', left: '80%' },
+              'uk-distr': { top: '22%', left: '47%' },
+              'china-mg': { top: '41%', left: '72%' }
             };
 
             const position = positions[entity.id as keyof typeof positions] || { top: '50%', left: '50%' };
@@ -762,7 +776,7 @@ export default function InteractiveIcFlow({ onSideBySideChange }: InteractiveIcF
                          // Make bubble semi-transparent so lines can be seen passing through
                          opacity: 0.92
                        }}>
-                    <IconComponent className="w-6 h-6 text-white" />
+                    <IconComponent className="w-8 h-8 text-white" />
                     
                     {/* Subtle pulse ring */}
                     <div 
@@ -784,16 +798,18 @@ export default function InteractiveIcFlow({ onSideBySideChange }: InteractiveIcF
                 </div>
 
                 {/* Hover tooltip */}
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <div className="bg-white/95 backdrop-blur-sm text-gray-900 px-4 py-3 rounded-lg shadow-xl border border-gray-200 text-sm whitespace-nowrap min-w-[200px]">
+                <div className={cn('absolute left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200',entity.tooltip === 'top' ? 'top-full' : 'bottom-full')} style={{ marginTop: '7px', zIndex: '9999' }}>
+                    <div className="bg-white/95 backdrop-blur-sm text-gray-900 px-4 py-3 rounded-lg shadow-xl border border-gray-200 text-sm whitespace-nowrap min-w-[200px]">
                     <div className="font-semibold text-gray-900 mb-1">{entity.name}</div>
                     <div className="text-xs text-gray-600 mb-2">{entity.type} • {entity.region}</div>
                     <div className="text-xs space-y-1">
                       <div>Revenue: <span className="font-medium text-green-600">{entity.revenue}</span></div>
-                      <div>Total Outflows: <span className="font-medium text-blue-600">{entity.outgoingPayments?.reduce((sum, payment) => sum + parseInt(payment.amount.replace(/[^0-9]/g, '')), 0) || 0}M</span></div>
+                      <div>Total Outflows: <span className="font-medium text-blue-600">
+                        {entity.outgoingPayments?.reduce((sum, payment) => sum + parseInt(payment.amount.replace(/[^0-9]/g, '')), 0) || 0}M
+                      </span></div>
                     </div>
                     {/* Tooltip arrow */}
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2">
+                    <div className={cn('absolute left-1/2 transform -translate-x-1/2', entity.tooltip === 'top' ? 'bottom-full' : 'top-full')}>
                       <div className="border-4 border-transparent border-t-white/95"></div>
                     </div>
                   </div>
