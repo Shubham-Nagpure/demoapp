@@ -135,23 +135,21 @@ export default function InteractiveIcFlow({
             path.style.animation = `drawLineFade 6s ease-in-out infinite`;
             path.style.animationDelay = `${index * 0.3}s`;
             
-            // Ensure markers are visible
-            path.style.setProperty('--marker-opacity', '1');
+            // Apply the same delay to the marker
             const markerId = path.getAttribute('marker-end');
             if (markerId) {
               const cleanMarkerId = markerId.replace('url(#', '#').replace(')', '');
               const marker = document.querySelector(cleanMarkerId);
               if (marker) {
-                (marker as any).style.opacity = '1';
-                // Let CSS handle arrow animation
                 const markerPath = marker.querySelector('path');
                 if (markerPath) {
-                  markerPath.style.opacity = '1';
-                  markerPath.style.animation = '';
-                  markerPath.style.animationDelay = '';
+                  markerPath.style.animationDelay = `${index * 0.3}s`;
                 }
               }
             }
+            
+            // Ensure markers are visible and animated
+            path.style.setProperty('--marker-opacity', '1');
             
             // Create a moving arrow element for each path
             const arrowId = `moving-arrow-${index}`;
@@ -209,7 +207,7 @@ export default function InteractiveIcFlow({
           path.style.animation = `drawLineFade 6s ease-in-out infinite`;
           path.style.animationDelay = `${index * 0.3}s`;
           
-          // Ensure markers are visible
+          // Apply the same delay to the marker
           const markerId = path.getAttribute('marker-end');
           if (markerId) {
             const cleanMarkerId = markerId.replace('url(#', '#').replace(')', '');
@@ -217,7 +215,7 @@ export default function InteractiveIcFlow({
             if (marker) {
               const markerPath = marker.querySelector('path');
               if (markerPath) {
-                markerPath.style.opacity = '1';
+                markerPath.style.animationDelay = `${index * 0.3}s`;
               }
             }
           }

@@ -10018,10 +10018,10 @@ html {
   0% {
     opacity: 0;
   }
-  15% {
+  20% {
     opacity: 1;
   }
-  75% {
+  80% {
     opacity: 1;
   }
   100% {
@@ -10081,16 +10081,17 @@ svg path[marker-end] marker path {
   animation: drawLineFade 6s ease-in-out infinite;
 }
 
-/* Arrows should be visible and follow their parent path timing */
+/* Arrows should appear when line drawing completes */
 .connection-svg path[marker-end] marker path {
-  opacity: 1;
-  animation: none;
+  opacity: 0;
+  animation: arrowSync 6s ease-in-out infinite;
+  animation-delay: inherit;
 }
 
 /* Animate text values to sync with their respective arrows */
 .line-text-values text {
   opacity: 0;
-  animation: textFade 8s ease-in-out infinite;
+  animation: textFade 6s ease-in-out infinite;
   animation-delay: inherit;
 }
 
@@ -10099,10 +10100,10 @@ svg path[marker-end] marker path {
   0% {
     opacity: 0;
   }
-  15% {
+  20% {
     opacity: 1;
   }
-  75% {
+  80% {
     opacity: 1;
   }
   100% {
