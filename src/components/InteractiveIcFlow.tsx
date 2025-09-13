@@ -135,29 +135,20 @@ export default function InteractiveIcFlow({
             path.style.animation = `drawLineFade 6s ease-in-out infinite`;
             path.style.animationDelay = `${index * 0.3}s`;
             
-            // Hide static markers initially
-            path.style.setProperty('--marker-opacity', '0');
+            // Ensure markers are visible
+            path.style.setProperty('--marker-opacity', '1');
             const markerId = path.getAttribute('marker-end');
             if (markerId) {
               const cleanMarkerId = markerId.replace('url(#', '#').replace(')', '');
               const marker = document.querySelector(cleanMarkerId);
               if (marker) {
-                (marker as any).style.opacity = '0';
-                // Arrow animation is handled by CSS
+                (marker as any).style.opacity = '1';
+                // Let CSS handle arrow animation
                 const markerPath = marker.querySelector('path');
                 if (markerPath) {
-                  // Remove any inline animation styles to let CSS handle it
+                  markerPath.style.opacity = '1';
                   markerPath.style.animation = '';
                   markerPath.style.animationDelay = '';
-                }
-                // Debug: log initial marker setup
-                if (index < 3) {
-                  console.log(`Initial setup - Path ${index}: Found marker ${cleanMarkerId}`);
-                }
-              } else {
-                // Debug: log missing markers in setup
-                if (index < 3) {
-                  console.log(`Initial setup - Path ${index}: Marker not found for ${cleanMarkerId}`);
                 }
               }
             }
@@ -218,14 +209,16 @@ export default function InteractiveIcFlow({
           path.style.animation = `drawLineFade 6s ease-in-out infinite`;
           path.style.animationDelay = `${index * 0.3}s`;
           
-          // Apply synchronized arrow animation to markers
+          // Ensure markers are visible
           const markerId = path.getAttribute('marker-end');
           if (markerId) {
             const cleanMarkerId = markerId.replace('url(#', '#').replace(')', '');
             const marker = document.querySelector(cleanMarkerId);
             if (marker) {
               const markerPath = marker.querySelector('path');
-              // Arrows controlled by --marker-opacity property
+              if (markerPath) {
+                markerPath.style.opacity = '1';
+              }
             }
           }
         });
@@ -777,7 +770,7 @@ export default function InteractiveIcFlow({
                 orient="auto"
                 markerUnits="strokeWidth"
               >
-                <path d="M2,2 L2,10 L10,6 z" fill="#2563eb" stroke="none" />
+                <path d="M2,2 L2,10 L10,6 z" fill="#2563eb" stroke="none" opacity="1" />
               </marker>
               <marker
                 id="arrow-purple-solid"
@@ -788,7 +781,7 @@ export default function InteractiveIcFlow({
                 orient="auto"
                 markerUnits="strokeWidth"
               >
-                <path d="M2,2 L2,10 L10,6 z" fill="#7c3aed" stroke="none" />
+                <path d="M2,2 L2,10 L10,6 z" fill="#7c3aed" stroke="none" opacity="1" />
               </marker>
               <marker
                 id="arrow-orange-solid"
@@ -799,7 +792,7 @@ export default function InteractiveIcFlow({
                 orient="auto"
                 markerUnits="strokeWidth"
               >
-                <path d="M2,2 L2,10 L10,6 z" fill="#ea580c" stroke="none" />
+                <path d="M2,2 L2,10 L10,6 z" fill="#ea580c" stroke="none" opacity="1" />
               </marker>
 
               {/* Flow particles animation */}
@@ -1026,7 +1019,7 @@ export default function InteractiveIcFlow({
                 orient="auto"
                 markerUnits="strokeWidth"
               >
-                <path d="M2,2 L2,10 L10,6 z" fill="#a855f7" />
+                <path d="M2,2 L2,10 L10,6 z" fill="#a855f7" opacity="1" />
               </marker>
               {/* Blue arrow - using the main definition above */}
               {/* Orange arrow */}
@@ -1039,7 +1032,7 @@ export default function InteractiveIcFlow({
                 orient="auto"
                 markerUnits="strokeWidth"
               >
-                <path d="M2,2 L2,10 L10,6 z" fill="#ea580c" />
+                <path d="M2,2 L2,10 L10,6 z" fill="#ea580c" opacity="1" />
               </marker>
               {/* Green arrow */}
               <marker
@@ -1051,7 +1044,7 @@ export default function InteractiveIcFlow({
                 orient="auto"
                 markerUnits="strokeWidth"
               >
-                <path d="M2,2 L2,10 L10,6 z" fill="#059669" stroke="none" />
+                <path d="M2,2 L2,10 L10,6 z" fill="#059669" stroke="none" opacity="1" />
               </marker>
             </defs>
             <path

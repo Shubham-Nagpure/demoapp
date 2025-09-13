@@ -10031,11 +10031,11 @@ html {
 
 /* Control marker opacity based on CSS custom property */
 .connection-svg path[marker-end] {
-  --marker-opacity: 0;
+  --marker-opacity: 1;
 }
 
 .connection-svg path[marker-end] marker path {
-  opacity: var(--marker-opacity, 0);
+  opacity: var(--marker-opacity, 1);
 }
 
 /* Ensure clean initial state - hide all lines and arrows initially */
@@ -10046,7 +10046,7 @@ html {
 }
 
 .connection-svg path[marker-end] marker path {
-  opacity: 0;
+  opacity: 1;
 }
 
 /* Prevent flash during animation restart */
@@ -10066,13 +10066,13 @@ html {
 }
 
 .connection-svg:not(.animation-started) path[marker-end] marker path {
-  opacity: 0;
+  opacity: 1;
 }
 
 /* Make arrows follow their parent path's opacity exactly */
 .connection-svg path[marker-end] marker path,
 svg path[marker-end] marker path {
-  opacity: var(--marker-opacity, 0);
+  opacity: var(--marker-opacity, 1);
   animation: none;
 }
 
@@ -10081,17 +10081,10 @@ svg path[marker-end] marker path {
   animation: drawLineFade 6s ease-in-out infinite;
 }
 
-/* Arrows should follow the same timing as their parent paths but appear when line completes */
+/* Arrows should be visible and follow their parent path timing */
 .connection-svg path[marker-end] marker path {
-  animation: arrowSync 6s ease-in-out infinite;
-  animation-delay: inherit;
-}
-
-/* Override to make arrows appear exactly when line drawing completes */
-.connection-svg path[marker-end] marker path {
-  animation: arrowSync 6s ease-in-out infinite;
-  animation-delay: inherit;
-  animation-fill-mode: both;
+  opacity: 1;
+  animation: none;
 }
 
 /* Animate text values to sync with their respective arrows */
