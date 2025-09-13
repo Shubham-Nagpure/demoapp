@@ -1050,6 +1050,7 @@ export default function InteractiveIcFlow({
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-blue-solid)"
+              filter="url(#glow-blue)"
             />
             {/* China → IPCo */}
             <path
@@ -1058,6 +1059,7 @@ export default function InteractiveIcFlow({
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-purple)"
+              filter="url(#glow-black)"
             />
             {/* SG → IPCo */}
             <path
@@ -1066,6 +1068,7 @@ export default function InteractiveIcFlow({
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-purple)"
+              filter="url(#glow-black)"
             />
             {/* Management Fees: HQ → China, SG, Japan, UK, Australia */}
             <path
@@ -1074,6 +1077,7 @@ export default function InteractiveIcFlow({
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-orange)"
+              filter="url(#glow-orange)"
             />
             <path
               d="M 25 40 Q 10 10 46 17"
@@ -1081,6 +1085,7 @@ export default function InteractiveIcFlow({
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-orange)"
+              filter="url(#glow-orange)"
             />
             <path
               d="M 25 40 Q 50 5 82 42"
@@ -1088,6 +1093,7 @@ export default function InteractiveIcFlow({
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-orange)"
+              filter="url(#glow-orange)"
             />
             <path
               d="M 25 40 Q 50 90 80 75"
@@ -1095,6 +1101,7 @@ export default function InteractiveIcFlow({
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-orange)"
+              filter="url(#glow-orange)"
             />
             {/* USHQ → China */}
             <path
@@ -1103,6 +1110,7 @@ export default function InteractiveIcFlow({
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-orange)"
+              filter="url(#glow-orange)"
             />
             {/* USHQ → SG */}
             <path
@@ -1111,6 +1119,7 @@ export default function InteractiveIcFlow({
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-orange)"
+              filter="url(#glow-orange)"
             />
             {/* Resale Minus: Mfg → Distr */}
             <path
@@ -1119,6 +1128,7 @@ export default function InteractiveIcFlow({
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-green)"
+              filter="url(#glow-green)"
             />
             <path
               d="M 75 55 Q 60 70 80 75"
@@ -1126,6 +1136,7 @@ export default function InteractiveIcFlow({
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-green)"
+              filter="url(#glow-green)"
             />
             <path
               d="M 75 55 Q 85 65 82 42"
@@ -1133,6 +1144,7 @@ export default function InteractiveIcFlow({
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-green)"
+              filter="url(#glow-green)"
             />
           </svg>
 
