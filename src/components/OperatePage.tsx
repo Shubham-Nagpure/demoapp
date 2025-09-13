@@ -3,17 +3,7 @@ import PageHeader from "./PageHeader";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-import { Progress } from "./ui/progress";
 import { Alert, AlertDescription } from "./ui/alert";
-import { Input } from "./ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
-import { Checkbox } from "./ui/checkbox";
 import RulesSettingCalculator from "./RulesSettingCalculator";
 import {
   Upload,
@@ -1495,7 +1485,7 @@ export default function OperatePage() {
                   Map intercompany transactions between entities
                 </p>
               </div>
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button variant="login">
                 <Plus className="w-4 h-4 mr-2" />
                 Add Mapping
               </Button>
@@ -2342,7 +2332,6 @@ export default function OperatePage() {
             {/* Action Buttons */}
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-600">
-                Hover over adjustment cells for detailed explanations
               </div>
               <div className="flex space-x-3">
                 <Button variant="outline">
@@ -2973,8 +2962,9 @@ export default function OperatePage() {
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div
-                className="bg-blue-500 h-2 rounded-full transition-all duration-500 ease-out"
+                className="h-2 rounded-full transition-all duration-500 ease-out"
                 style={{
+                  background: 'linear-gradient(90deg, #32c7db, #28a3b3)',
                   width: `${
                     ((operateSteps.findIndex((s) => s.id === activeStep) + 1) /
                       operateSteps.length) *
@@ -3040,8 +3030,8 @@ export default function OperatePage() {
 
                       {/* Step status indicator */}
                       {isActive && !isSidebarCollapsed && (
-                        <div className="absolute -right-1 -top-1 w-4 h-4 bg-blue-500 rounded-full border-2 border-white">
-                          <div className="w-full h-full bg-blue-500 rounded-full animate-pulse"></div>
+                        <div className="absolute -right-1 -top-1 w-4 h-4 rounded-full border-2 border-white" style={{ background: 'linear-gradient(135deg, #32c7db, #28a3b3)' }}>
+                          <div className="w-full h-full bg-blue-500 rounded-full animate-pulse" style={{ background: 'linear-gradient(135deg, #32c7db, #28a3b3)' }}></div>
                         </div>
                       )}
                     </div>

@@ -46,16 +46,6 @@ function IconOutlineCheveronDownGray() {
 
 import { useState } from "react";
 import Filter53401401 from "../imports/Filter53401401";
-import diagramImage from "figma:asset/32459e1f99990609b9d7ea1ae5ded397c09df22c.png";
-import futureStateImage from "figma:asset/b66513ffcf77068f7303fff66710d2cb640930ea.png";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogTitle,
-  DialogDescription,
-  DialogHeader,
-} from "./ui/dialog";
 import PageHeader from "./PageHeader";
 import {
   Building2,
@@ -71,6 +61,8 @@ import {
   ChevronRight,
   BarChart3,
 } from "lucide-react";
+import React from "react";
+import { cn } from "./ui/utils";
 
 type StateOption = "Current" | "Future" | "Side by side";
 type FeeOption =
@@ -86,6 +78,7 @@ interface EntityData {
   type: string;
   region: string;
   revenue: string;
+  tooltip: string;
   outgoingPayments?: Array<{
     description: string;
     recipient: string;
@@ -150,6 +143,7 @@ export default function InteractiveIcFlow({
       type: "Headquarters",
       region: "Americas",
       revenue: "$2100M",
+      tooltip: "top",
       outgoingPayments: [
         {
           description: "License Fee",
@@ -164,6 +158,7 @@ export default function InteractiveIcFlow({
       type: "IP Holding Company",
       region: "Europe",
       revenue: "$2100M",
+      tooltip: "top",
       incomingPayments: [
         {
           description: "License Fee",
@@ -205,6 +200,7 @@ export default function InteractiveIcFlow({
       type: "Manufacturing",
       region: "Asia Pacific",
       revenue: "$2100M",
+      tooltip: "top",
       incomingPayments: [
         {
           description: "Service Fee",
@@ -219,6 +215,7 @@ export default function InteractiveIcFlow({
       type: "Manufacturing",
       region: "Asia Pacific",
       revenue: "$2100M",
+      tooltip: "top",
       incomingPayments: [
         {
           description: "Service Fee",
@@ -233,6 +230,7 @@ export default function InteractiveIcFlow({
       type: "Distribution",
       region: "Asia Pacific",
       revenue: "$2100M",
+      tooltip: "top",
       incomingPayments: [
         {
           description: "Distribution Fee",
@@ -247,6 +245,7 @@ export default function InteractiveIcFlow({
       type: "Distribution",
       region: "Europe",
       revenue: "$2100M",
+      tooltip: "top",
       incomingPayments: [
         {
           description: "Distribution Fee",
@@ -261,6 +260,7 @@ export default function InteractiveIcFlow({
       type: "Distribution",
       region: "Asia Pacific",
       revenue: "$2100M",
+      tooltip: "bottom",
       incomingPayments: [
         {
           description: "Distribution Fee",
@@ -488,9 +488,10 @@ export default function InteractiveIcFlow({
           {/* World map background */}
           <div className="absolute inset-0">
             <div
-              className="absolute inset-0 w-full h-full opacity-20"
+              className="absolute inset-0 w-full h-full"
               style={{
-                backgroundImage: `url('https://images.unsplash.com/photo-1742415105376-43d3a5fd03fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx8fDE3NTc0OTgyNTh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral')`,
+                // backgroundImage: `url('https://images.unsplash.com/photo-1742415105376-43d3a5fd03fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx8fDE3NTc0OTgyNTh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral')`,
+                backgroundImage: `url("src/assets/blue-map-world-with-word-world-it.jpg")`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
@@ -499,7 +500,6 @@ export default function InteractiveIcFlow({
           </div>
 
           {/* Ultra Modern Animated Connection Lines SVG */}
-
           <svg
             className="absolute inset-0 w-full h-full pointer-events-none"
             style={{ zIndex: 5 }}
@@ -1023,7 +1023,7 @@ export default function InteractiveIcFlow({
             <path
               d="M 52 32 Q 40 36 27 40"
               stroke="#2563eb"
-              strokeWidth="0.1"
+              strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-blue-solid)"
             />
@@ -1031,7 +1031,7 @@ export default function InteractiveIcFlow({
             <path
               d="M 69 42 Q 61 38 53 32"
               stroke="#000000"
-              strokeWidth="0.1"
+              strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-black)"
             />
@@ -1039,7 +1039,7 @@ export default function InteractiveIcFlow({
             <path
               d="M 74 55 Q 63 45 53 32"
               stroke="#000000"
-              strokeWidth="0.1"
+              strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-black)"
             />
@@ -1047,28 +1047,28 @@ export default function InteractiveIcFlow({
             <path
               d="M 26 40 Q 35 30 46 28"
               stroke="#ea580c"
-              strokeWidth="0.1"
+              strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-orange)"
             />
             <path
               d="M 26 40 Q 35 35 50 32"
               stroke="#ea580c"
-              strokeWidth="0.1"
+              strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-orange)"
             />
             <path
               d="M 26 40 Q 55 35 80 42"
               stroke="#ea580c"
-              strokeWidth="0.1"
+              strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-orange)"
             />
             <path
               d="M 26 40 Q 50 60 78 75"
               stroke="#ea580c"
-              strokeWidth="0.1"
+              strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-orange)"
             />
@@ -1076,7 +1076,7 @@ export default function InteractiveIcFlow({
             <path
               d="M 26 40 Q 40 42 68 45"
               stroke="#ea580c"
-              strokeWidth="0.1"
+              strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-orange)"
             />
@@ -1084,7 +1084,7 @@ export default function InteractiveIcFlow({
             <path
               d="M 26 40 Q 35 50 73 55"
               stroke="#ea580c"
-              strokeWidth="0.1"
+              strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-orange)"
             />
@@ -1092,21 +1092,21 @@ export default function InteractiveIcFlow({
             <path
               d="M 75 52 Q 65 40 50 28"
               stroke="#059669"
-              strokeWidth="0.1"
+              strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-green)"
             />
             <path
               d="M 76 57 Q 78 63 80 72"
               stroke="#059669"
-              strokeWidth="0.1"
+              strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-green)"
             />
             <path
               d="M 76 57 Q 82 50 82 46"
               stroke="#059669"
-              strokeWidth="0.1"
+              strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-green)"
             />
@@ -1145,7 +1145,7 @@ export default function InteractiveIcFlow({
             };
 
             const IconComponent = getEntityTypeIcon(entity.type);
-            const bubbleSize = "w-12 h-12"; // Bigger bubbles for better visibility
+            const bubbleSize = "w-16 h-16"; // Bigger bubbles for better visibility
             const bubbleColor = getEntityTypeColor(entity.type);
 
             // Use approximate positions based on entity locations
@@ -1212,7 +1212,13 @@ export default function InteractiveIcFlow({
                 </div>
 
                 {/* Hover tooltip */}
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <div
+                  className={cn(
+                    "absolute left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200",
+                    entity.tooltip === "top" ? "top-full" : "bottom-full"
+                  )}
+                  style={{ marginTop: "7px", zIndex: "9999" }}
+                >
                   <div className="bg-white/95 backdrop-blur-sm text-gray-900 px-4 py-3 rounded-lg shadow-xl border border-gray-200 text-sm whitespace-nowrap min-w-[200px]">
                     <div className="font-semibold text-gray-900 mb-1">
                       {entity.name}
@@ -1241,7 +1247,12 @@ export default function InteractiveIcFlow({
                       </div>
                     </div>
                     {/* Tooltip arrow */}
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2">
+                    <div
+                      className={cn(
+                        "absolute left-1/2 transform -translate-x-1/2",
+                        entity.tooltip === "top" ? "bottom-full" : "top-full"
+                      )}
+                    >
                       <div className="border-4 border-transparent border-t-white/95"></div>
                     </div>
                   </div>

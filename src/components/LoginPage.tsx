@@ -31,7 +31,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           height: "1024px",
           width: "auto",
           marginBottom: "-560px",
-          zIndex: -2,
+          zIndex: -3,
         }}
       >
         <source src={globeImage} type="video/mp4" />
