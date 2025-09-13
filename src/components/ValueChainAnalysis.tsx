@@ -93,6 +93,12 @@ export default function ValueChainAnalysis() {
   const supportTotal = supportActivities.reduce((sum, activity) => sum + activity.percentage, 0);
   const primaryTotal = primaryActivities.reduce((sum, activity) => sum + activity.percentage, 0);
 
+  const goToNextStep = () => {
+    if (currentStep < steps.length) {
+      setCurrentStep(currentStep + 1);
+    }
+  }
+
   return (
     <div className="h-full overflow-auto bg-white">
       <PageHeader 
@@ -133,7 +139,7 @@ export default function ValueChainAnalysis() {
                           isCompleted 
                             ? 'bg-emerald-500 border-emerald-500 shadow-lg shadow-emerald-500/25' 
                             : isActive 
-                            ? 'bg-blue-500 border-blue-500 shadow-lg shadow-blue-500/25' 
+                            ? 'bg-login shadow-lg shadow-blue-500/25' 
                             : 'bg-white border-gray-300 shadow-sm hover:border-gray-400'
                         }`}>
                           {isCompleted ? (
@@ -149,18 +155,9 @@ export default function ValueChainAnalysis() {
 
                         {/* Step Content */}
                         <div className="text-center mt-4 px-2">
-                          <h4 className={`font-semibold text-sm mb-1 transition-colors duration-200 ${
-                            isActive ? 'text-blue-700' : 
-                            isCompleted ? 'text-emerald-700' : 
-                            'text-gray-600'
-                          }`}>
-                            {step.name}
+                          <h4 className={`font-semibold text-sm mb-1 transition-colors duration-200 text-gray-600`}>                            {step.name}
                           </h4>
-                          <p className={`text-xs leading-relaxed transition-colors duration-200 ${
-                            isActive ? 'text-blue-600' : 
-                            isCompleted ? 'text-emerald-600' : 
-                            'text-gray-500'
-                          }`}>
+                          <p className={`text-xs leading-relaxed transition-colors duration-200 text-gray-500`}>
                             {step.description}
                           </p>
                         </div>
@@ -922,15 +919,15 @@ export default function ValueChainAnalysis() {
 
 
           {/* Next Step Actions */}
+          {currentStep < 4 && (
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-600">
-              <p>Click on activities above to view detailed descriptions</p>
             </div>
-            <Button variant="login">
+            <Button variant="login" objective="next" onClick={goToNextStep} className="group">
               Next: Identify Key Drivers
               <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform duration-200" />
             </Button>
-          </div>
+          </div>)}
 
         </div>
       </div>

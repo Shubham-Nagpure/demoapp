@@ -784,7 +784,7 @@ export default function InteractiveIcFlow({ onSideBySideChange }: InteractiveIcF
                 </div>
 
                 {/* Hover tooltip */}
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mb-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <div className="bg-white/95 backdrop-blur-sm text-gray-900 px-4 py-3 rounded-lg shadow-xl border border-gray-200 text-sm whitespace-nowrap min-w-[200px]">
                     <div className="font-semibold text-gray-900 mb-1">{entity.name}</div>
                     <div className="text-xs text-gray-600 mb-2">{entity.type} • {entity.region}</div>

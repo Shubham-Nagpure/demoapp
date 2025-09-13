@@ -169,7 +169,7 @@ const RulesSettingCalculator = () => {
               <Plus className="h-4 w-4 mr-2" />
               Add Rule
             </Button>
-            <Button className="btn-primary-gradient" onClick={applyRules}>
+            <Button variant="login" onClick={applyRules}>
               <Save className="h-4 w-4 mr-2" />
               Apply Rules
             </Button>
@@ -251,7 +251,7 @@ const RulesSettingCalculator = () => {
               Click any cell to edit • Use dropdowns for predefined options
             </div>
           </div>
-          <Button variant="outline" className="text-blue-600 border-blue-200 hover:bg-blue-50">
+          <Button variant="login" className="text-blue-600 border-blue-200 hover:bg-blue-50">
             <Calculator className="h-4 w-4 mr-2" />
             Calculate Impact
           </Button>

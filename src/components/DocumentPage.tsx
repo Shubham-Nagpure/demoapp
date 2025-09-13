@@ -371,11 +371,11 @@ export default function DocumentPage() {
             const IconComponent = kpi.icon;
             const getIconColor = (color: string) => {
               switch (color) {
-                case 'blue': return 'bg-blue-100 text-blue-600';
-                case 'emerald': return 'bg-emerald-100 text-emerald-600';
-                case 'orange': return 'bg-orange-100 text-orange-600';
-                case 'red': return 'bg-red-100 text-red-600';
-                default: return 'bg-gray-100 text-gray-600';
+                case 'blue': return 'bg-blue-50 text-blue-600';
+                case 'emerald': return 'bg-emerald-50 text-emerald-600';
+                case 'orange': return 'bg-orange-50 text-orange-600';
+                case 'red': return 'bg-red-50 text-red-600';
+                default: return 'bg-gray-50 text-gray-600';
               }
             };
 
