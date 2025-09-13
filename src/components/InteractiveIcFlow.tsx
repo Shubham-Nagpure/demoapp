@@ -973,7 +973,7 @@ export default function InteractiveIcFlow({
             <defs>
               {/* Black arrow */}
               <marker
-                id="arrow-black"
+                id="arrow-purple"
                 markerWidth="1"
                 markerHeight="1"
                 refX="0.8"
@@ -981,7 +981,7 @@ export default function InteractiveIcFlow({
                 orient="auto"
                 markerUnits="userSpaceOnUse"
               >
-                <path d="M0,0 L0,1 L0.8,0.5 z" fill="#000000" />
+                <path d="M0,0 L0,1 L0.8,0.5 z" fill="#a855f7" />
               </marker>
               {/* Blue arrow */}
               <marker
@@ -1030,18 +1030,18 @@ export default function InteractiveIcFlow({
             {/* China → IPCo */}
             <path
               d="M 69 42 Q 61 38 53 32"
-              stroke="#000000"
+              stroke="#a855f7"
               strokeWidth="0.2"
               fill="none"
-              markerEnd="url(#arrow-black)"
+              markerEnd="url(#arrow-purple)"
             />
             {/* SG → IPCo */}
             <path
               d="M 74 55 Q 63 45 53 32"
-              stroke="#000000"
+              stroke="#a855f7"
               strokeWidth="0.2"
               fill="none"
-              markerEnd="url(#arrow-black)"
+              markerEnd="url(#arrow-purple)"
             />
             {/* Management Fees: HQ → China, SG, Japan, UK, Australia */}
             <path
