@@ -49,7 +49,6 @@ import Filter53401401 from "../imports/Filter53401401";
 import PageHeader from "./PageHeader";
 import {
   Building2,
-  MapPin,
   DollarSign,
   ArrowUpRight,
   ArrowDownRight,
@@ -1046,7 +1045,7 @@ export default function InteractiveIcFlow({
               </marker>
             </defs>
             <path
-              d="M 52 32 Q 38 15 25 40"
+              d="M 43 22 Q 35 15 25 40"
               stroke="#2563eb"
               strokeWidth="0.2"
               fill="none"
@@ -1054,7 +1053,7 @@ export default function InteractiveIcFlow({
             />
             {/* China → IPCo */}
             <path
-              d="M 70 42 Q 75 20 52 32"
+              d="M 70 42 Q 60 25 43 22"
               stroke="#a855f7"
               strokeWidth="0.2"
               fill="none"
@@ -1062,7 +1061,7 @@ export default function InteractiveIcFlow({
             />
             {/* SG → IPCo */}
             <path
-              d="M 75 55 Q 80 25 52 32"
+              d="M 75 55 Q 55 60 43 22"
               stroke="#a855f7"
               strokeWidth="0.2"
               fill="none"
@@ -1070,14 +1069,14 @@ export default function InteractiveIcFlow({
             />
             {/* Management Fees: HQ → China, SG, Japan, UK, Australia */}
             <path
-              d="M 25 40 Q 20 10 48 28"
+              d="M 25 40 Q 20 15 42 20"
               stroke="#ea580c"
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-orange)"
             />
             <path
-              d="M 25 40 Q 20 15 52 32"
+              d="M 25 40 Q 10 10 46 17"
               stroke="#ea580c"
               strokeWidth="0.2"
               fill="none"
@@ -1099,7 +1098,7 @@ export default function InteractiveIcFlow({
             />
             {/* USHQ → China */}
             <path
-              d="M 25 40 Q 50 60 70 42"
+              d="M 25 40 Q 50 30 70 42"
               stroke="#ea580c"
               strokeWidth="0.2"
               fill="none"
@@ -1107,7 +1106,7 @@ export default function InteractiveIcFlow({
             />
             {/* USHQ → SG */}
             <path
-              d="M 25 40 Q 50 70 75 55"
+              d="M 25 40 Q 80 70 75 55"
               stroke="#ea580c"
               strokeWidth="0.2"
               fill="none"
@@ -1115,21 +1114,21 @@ export default function InteractiveIcFlow({
             />
             {/* Resale Minus: Mfg → Distr */}
             <path
-              d="M 75 55 Q 50 5 48 28"
+              d="M 75 55 Q 90 30 46 17"
               stroke="#059669"
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-green)"
             />
             <path
-              d="M 75 55 Q 85 85 80 75"
+              d="M 75 55 Q 60 70 80 75"
               stroke="#059669"
               strokeWidth="0.2"
               fill="none"
               markerEnd="url(#arrow-green)"
             />
             <path
-              d="M 75 55 Q 85 25 82 42"
+              d="M 75 55 Q 85 65 82 42"
               stroke="#059669"
               strokeWidth="0.2"
               fill="none"
@@ -1142,15 +1141,15 @@ export default function InteractiveIcFlow({
             const getEntityTypeIcon = (entityType: string) => {
               switch (entityType) {
                 case "Headquarters":
-                  return Building2;
+                  return "/src/assets/hq.svg";
                 case "IP Holding Company":
-                  return TrendingUp;
+                  return "/src/assets/ipco.svg";
                 case "Manufacturing":
-                  return Building2;
+                  return "/src/assets/mfg.svg";
                 case "Distribution":
-                  return MapPin;
+                  return "/src/assets/dist.svg";
                 default:
-                  return Building2;
+                  return "/src/assets/hq.svg";
               }
             };
 
@@ -1169,18 +1168,18 @@ export default function InteractiveIcFlow({
               }
             };
 
-            const IconComponent = getEntityTypeIcon(entity.type);
+            const iconPath = getEntityTypeIcon(entity.type);
             const bubbleSize = "w-16 h-16"; // Bigger bubbles for better visibility
             const bubbleColor = getEntityTypeColor(entity.type);
 
             // Use approximate positions based on entity locations
             const positions = {
-              "us-hq": { top: "40%", left: "25%" },
-              "irish-ipco": { top: "32%", left: "52%" },
+              "us-hq": { top: "36%", left: "25%" },
+              "irish-ipco": { top: "22%", left: "43%" },
               "singapore-mfg": { top: "55%", left: "75%" },
               "japan-distr": { top: "42%", left: "82%" },
               "australia-distr": { top: "75%", left: "80%" },
-              "uk-distr": { top: "28%", left: "48%" },
+              "uk-distr": { top: "17%", left: "46%" },
               "china-mg": { top: "42%", left: "70%" },
             };
 
@@ -1194,7 +1193,7 @@ export default function InteractiveIcFlow({
                 <HoverCardTrigger asChild>
                   <div
                     className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
-                    style={{ top: position.top, left: position.left, zIndex: 10 }}
+                    style={{ top: position.top, left: position.left, zIndex: 5 }}
                   >
                     {/* Entity bubble with financial data */}
                     <div className="flex flex-col items-center space-y-2">
@@ -1205,20 +1204,29 @@ export default function InteractiveIcFlow({
                         </span>
                       </div>
 
+                      <img 
+                          src={iconPath} 
+                          alt={`${entity.type} icon`}
+                          className="w-12 h-12 text-white"
+                          style={{ zIndex: 15, position: 'relative' }}
+                        />
+
                       {/* Entity bubble */}
-                      <div
+                      {/* <div
                         className={`${bubbleSize} rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 flex items-center justify-center relative backdrop-blur-sm`}
                         style={{
                           backgroundColor: bubbleColor,
                           border: "4px solid white",
                           boxShadow: `0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.1)`,
-                          // Make bubble semi-transparent so lines can be seen passing through
                           opacity: 0.92,
                         }}
                       >
-                        <IconComponent className="w-6 h-6 text-white" />
-
-                        {/* Subtle pulse ring */}
+                        <img 
+                          src={iconPath} 
+                          alt={`${entity.type} icon`}
+                          className="w-6 h-6 text-white"
+                          style={{ zIndex: 15, position: 'relative' }}
+                        />
                         <div
                           className="absolute inset-0 rounded-full animate-ping opacity-15"
                           style={{
@@ -1227,7 +1235,7 @@ export default function InteractiveIcFlow({
                             animationIterationCount: "infinite",
                           }}
                         />
-                      </div>
+                      </div> */}
 
                       {/* Entity name */}
                       <div className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg shadow-sm border border-white/20">
@@ -1312,7 +1320,11 @@ export default function InteractiveIcFlow({
                     border: "2px solid white",
                   }}
                 >
-                  <Building2 className="w-4 h-4 text-white" />
+                  <img 
+                    src="/src/assets/hq.svg" 
+                    alt="Headquarters icon"
+                    className="w-4 h-4 text-white"
+                  />
                 </div>
                 <span className="text-xs text-gray-600">Headquarters</span>
               </div>
@@ -1324,7 +1336,11 @@ export default function InteractiveIcFlow({
                     border: "2px solid white",
                   }}
                 >
-                  <TrendingUp className="w-4 h-4 text-white" />
+                  <img 
+                    src="/src/assets/ipco.svg" 
+                    alt="IP Holding Company icon"
+                    className="w-4 h-4 text-white"
+                  />
                 </div>
                 <span className="text-xs text-gray-600">
                   IP Holding Company
@@ -1338,7 +1354,11 @@ export default function InteractiveIcFlow({
                     border: "2px solid white",
                   }}
                 >
-                  <Building2 className="w-4 h-4 text-white" />
+                  <img 
+                    src="/src/assets/mfg.svg" 
+                    alt="Manufacturing icon"
+                    className="w-4 h-4 text-white"
+                  />
                 </div>
                 <span className="text-xs text-gray-600">Manufacturing</span>
               </div>
@@ -1350,7 +1370,11 @@ export default function InteractiveIcFlow({
                     border: "2px solid white",
                   }}
                 >
-                  <MapPin className="w-4 h-4 text-white" />
+                  <img 
+                    src="/src/assets/dist.svg" 
+                    alt="Distribution icon"
+                    className="w-4 h-4 text-white"
+                  />
                 </div>
                 <span className="text-xs text-gray-600">Distribution</span>
               </div>
