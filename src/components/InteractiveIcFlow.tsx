@@ -310,6 +310,36 @@ export default function InteractiveIcFlow({
   const resetZoom = () => {
     setZoomLevel(1);
   };
+
+  function lineBetweenNodes(x1, y1, x2, y2, r1, r2, curveOffset = 10) {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const len = Math.sqrt(dx * dx + dy * dy);
+
+    const ux = dx / len;
+    const uy = dy / len;
+
+    const startX = x1 + ux * r1;
+    const startY = y1 + uy * r1;
+    const endX = x2 - ux * r2;
+    const endY = y2 - uy * r2;
+
+    // midpoint
+    const midX = (startX + endX) / 2;
+    const midY = (startY + endY) / 2;
+
+    // add curvature (push control point perpendicular to the line)
+    const perpX = -uy;
+    const perpY = ux;
+    const controlX = midX + perpX * curveOffset;
+    const controlY = midY + perpY * curveOffset;
+
+    return `M ${startX} ${startY} Q ${controlX} ${controlY}, ${endX} ${endY}`;
+  }
+
+  // Example: US HQ (25,40,r=3) → Irish IPCo (52,32,r=3)
+  const pathD = lineBetweenNodes(24, 40, 53, 32, 3, 3, 1);
+
   return (
     <div className="flex-1 bg-white overflow-auto">
       <PageHeader
@@ -934,6 +964,154 @@ export default function InteractiveIcFlow({
             </g>
           </svg>
 
+          <svg
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            style={{ zIndex: 11 }}
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+          >
+            <defs>
+              {/* Black arrow */}
+              <marker
+                id="arrow-purple"
+                markerWidth="1"
+                markerHeight="1"
+                refX="0.8"
+                refY="0.5"
+                orient="auto"
+                markerUnits="userSpaceOnUse"
+              >
+                <path d="M0,0 L0,1 L0.8,0.5 z" fill="#a855f7" />
+              </marker>
+              {/* Blue arrow */}
+              <marker
+                id="arrow-blue-solid"
+                markerWidth="1"
+                markerHeight="1"
+                refX="0.8"
+                refY="0.5"
+                orient="auto"
+                markerUnits="userSpaceOnUse"
+              >
+                <path d="M0,0 L0,1 L0.8,0.5 z" fill="#2563eb" />
+              </marker>
+              {/* Orange arrow */}
+              <marker
+                id="arrow-orange"
+                markerWidth="1"
+                markerHeight="1"
+                refX="0.8"
+                refY="0.5"
+                orient="auto"
+                markerUnits="userSpaceOnUse"
+              >
+                <path d="M0,0 L0,1 L0.8,0.5 z" fill="#ea580c" />
+              </marker>
+              {/* Green arrow */}
+              <marker
+                id="arrow-green"
+                markerWidth="1"
+                markerHeight="1"
+                refX="0.8"
+                refY="0.5"
+                orient="auto"
+                markerUnits="userSpaceOnUse"
+              >
+                <path d="M0,0 L0,1 L0.8,0.5 z" fill="#059669" />
+              </marker>
+            </defs>
+            <path
+              d="M 52 32 Q 40 36 27 40"
+              stroke="#2563eb"
+              strokeWidth="0.2"
+              fill="none"
+              markerEnd="url(#arrow-blue-solid)"
+            />
+            {/* China → IPCo */}
+            <path
+              d="M 69 42 Q 61 38 53 32"
+              stroke="#a855f7"
+              strokeWidth="0.2"
+              fill="none"
+              markerEnd="url(#arrow-purple)"
+            />
+            {/* SG → IPCo */}
+            <path
+              d="M 74 55 Q 63 45 53 32"
+              stroke="#a855f7"
+              strokeWidth="0.2"
+              fill="none"
+              markerEnd="url(#arrow-purple)"
+            />
+            {/* Management Fees: HQ → China, SG, Japan, UK, Australia */}
+            <path
+              d="M 26 40 Q 35 30 46 28"
+              stroke="#ea580c"
+              strokeWidth="0.2"
+              fill="none"
+              markerEnd="url(#arrow-orange)"
+            />
+            <path
+              d="M 26 40 Q 35 35 50 32"
+              stroke="#ea580c"
+              strokeWidth="0.2"
+              fill="none"
+              markerEnd="url(#arrow-orange)"
+            />
+            <path
+              d="M 26 40 Q 55 35 80 42"
+              stroke="#ea580c"
+              strokeWidth="0.2"
+              fill="none"
+              markerEnd="url(#arrow-orange)"
+            />
+            <path
+              d="M 26 40 Q 50 60 78 75"
+              stroke="#ea580c"
+              strokeWidth="0.2"
+              fill="none"
+              markerEnd="url(#arrow-orange)"
+            />
+            {/* USHQ → China */}
+            <path
+              d="M 26 40 Q 40 42 68 45"
+              stroke="#ea580c"
+              strokeWidth="0.2"
+              fill="none"
+              markerEnd="url(#arrow-orange)"
+            />
+            {/* USHQ → SG */}
+            <path
+              d="M 26 40 Q 35 50 73 55"
+              stroke="#ea580c"
+              strokeWidth="0.2"
+              fill="none"
+              markerEnd="url(#arrow-orange)"
+            />
+            {/* Resale Minus: Mfg → Distr */}
+            <path
+              d="M 75 52 Q 65 40 50 28"
+              stroke="#059669"
+              strokeWidth="0.2"
+              fill="none"
+              markerEnd="url(#arrow-green)"
+            />
+            <path
+              d="M 76 57 Q 78 63 80 72"
+              stroke="#059669"
+              strokeWidth="0.2"
+              fill="none"
+              markerEnd="url(#arrow-green)"
+            />
+            <path
+              d="M 76 57 Q 82 50 82 46"
+              stroke="#059669"
+              strokeWidth="0.2"
+              fill="none"
+              markerEnd="url(#arrow-green)"
+            />
+          </svg>
+
           {/* Entity bubbles positioned on map */}
           {entitiesData.map((entity, index) => {
             const getEntityTypeIcon = (entityType: string) => {
@@ -972,13 +1150,13 @@ export default function InteractiveIcFlow({
 
             // Use approximate positions based on entity locations
             const positions = {
-              "us-hq": { top: "35%", left: "21%" },
-              "irish-ipco": { top: "22%", left: "43%" },
-              "singapore-mfg": { top: "63%", left: "73%" },
-              "japan-distr": { top: "40%", left: "82%" },
-              "australia-distr": { top: "80%", left: "80%" },
-              "uk-distr": { top: "22%", left: "47%" },
-              "china-mg": { top: "41%", left: "72%" },
+              "us-hq": { top: "40%", left: "25%" },
+              "irish-ipco": { top: "32%", left: "52%" },
+              "singapore-mfg": { top: "55%", left: "75%" },
+              "japan-distr": { top: "42%", left: "82%" },
+              "australia-distr": { top: "75%", left: "80%" },
+              "uk-distr": { top: "28%", left: "48%" },
+              "china-mg": { top: "42%", left: "70%" },
             };
 
             const position = positions[entity.id as keyof typeof positions] || {
@@ -1012,7 +1190,7 @@ export default function InteractiveIcFlow({
                       opacity: 0.92,
                     }}
                   >
-                    <IconComponent className="w-8 h-8 text-white" />
+                    <IconComponent className="w-6 h-6 text-white" />
 
                     {/* Subtle pulse ring */}
                     <div
