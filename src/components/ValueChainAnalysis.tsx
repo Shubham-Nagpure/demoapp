@@ -173,7 +173,7 @@ export default function ValueChainAnalysis() {
                             isCompleted
                               ? "bg-emerald-500 border-emerald-500 shadow-lg shadow-emerald-500/25"
                               : isActive
-                              ? "bg-blue-500 border-blue-500 shadow-lg shadow-blue-500/25"
+                              ? "step-login-gradient border-blue-500 shadow-lg shadow-blue-500/25 rounded-full"
                               : "bg-white border-gray-300 shadow-sm hover:border-gray-400"
                           }`}
                         >

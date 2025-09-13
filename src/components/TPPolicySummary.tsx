@@ -1,6 +1,7 @@
 import { Users, FileText, Factory, TrendingUp, ArrowUpRight, BarChart3, Shield, Clock, ExternalLink, Download } from 'lucide-react';
 import PageHeader from "./PageHeader";
 import { Progress } from './ui/progress';
+import { Button } from './ui/button';
 
 const currentStateCards = [
   {
@@ -315,20 +316,20 @@ export default function TPPolicySummary() {
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <button
+              <Button
                 onClick={handlePolicyDownload}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+                variant="login"
               >
                 <Download size={16} />
                 <span>Download PDF</span>
-              </button>
-              <button
+              </Button>
+              <Button 
                 onClick={handlePolicyOpenNewTab}
-                className="flex items-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+                variant="outline"
               >
                 <ExternalLink size={16} />
                 <span>Open in New Tab</span>
-              </button>
+              </Button>
             </div>
           </div>
         </div>

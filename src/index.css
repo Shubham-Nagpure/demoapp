@@ -9408,6 +9408,19 @@ html {
   transition-duration: .2s;
 }
 
+.step-login-gradient {
+  border-radius: 9999px;
+  border-style: var(--tw-border-style);
+  color: var(--color-white);
+  transition-property: all;
+  transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+  transition-duration: var(--tw-duration, var(--default-transition-duration));
+  --tw-duration: .2s;
+  background: linear-gradient(135deg, #32c7db 0%, #2db5c7 50%, #28a3b3 100%);
+  border-width: 0;
+  transition-duration: .2s;
+}
+
 .circle-login-gradient {
   color: var(--color-white);
   transition-property: all;

@@ -46,14 +46,14 @@ const sidebarTools = [
   {
     id: 'value-chain',
     title: 'Value Chain Analysis',
-    subtitle: '4-step workflow for comprehensive...',
+    subtitle: '4-step workflow for...',
     icon: TrendingUp,
     isActive: false
   },
   {
     id: 'far-analysis',
     title: 'FAR Analysis',
-    subtitle: 'Functions, Assets, and Risks a...',
+    subtitle: 'Functions, Assets, and Risks...',
     icon: Grid3X3,
     isActive: false
   },

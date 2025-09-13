@@ -2799,7 +2799,7 @@ export default function OperatePage() {
                           formatter={(value) => [`${value}%`, "ETR"]}
                         />
                         <Bar dataKey="etr" fill="#3b82f6" />
-                        <Bar dataKey="target" fill="#b9b9b9ff" />
+                        <Bar dataKey="target" fill="#11b981" />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>

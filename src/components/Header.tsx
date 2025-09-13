@@ -52,20 +52,22 @@ function Group1({ isDark }: { isDark?: boolean }) {
 function Group8({ isDark }: { isDark?: boolean }) {
   return (
     <div className="absolute contents left-[98px] top-[23px]">
-      <Group1 isDark={isDark} />
+      <img src={darkLogo} alt="Tagline" style={{ width: "71px", height: "10px", zIndex: 1}}/>
     </div>
   );
 }
 
 function Group214({ isDark }: { isDark?: boolean }) {
   return (
-    <div className="absolute contents left-[38px] top-[18px]">
-      <div
+    <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <img src={darkLogo} alt="Tagline" style={{ width: "120px", height: "30px", zIndex: 1, objectFit: "contain", objectPosition: "center"}}/>
+
+      {/* <div
         className="w-[32px] h-[32px] object-contain"
         data-name="logo"
         style={{ backgroundImage: `url('${darkLogo}')` }}
-      />
-      <Group8 isDark={isDark} />
+      /> */}
+      {/* <Group8 isDark={isDark} /> */}
     </div>
   );
 }
