@@ -113,133 +113,37 @@ export default function InteractiveIcFlow({
   const [zoomLevel, setZoomLevel] = useState(1);
   const connectionSvgRef = useRef<SVGSVGElement>(null);
 
-  // Line flow animation using Anime.js
+  // Dashed line animation
   useEffect(() => {
-    const animatePaths = () => {
-      // Check if anime is available and SVG ref is ready
-      if (typeof window !== 'undefined' && (window as any).anime && connectionSvgRef.current) {
-        const anime = (window as any).anime;
-        
-        // Find all path elements within the connection SVG
-        const paths = connectionSvgRef.current.querySelectorAll('path');
-        
-        if (paths.length > 0) {
-          // Set initial state for all paths - ensure they start hidden
-          paths.forEach((path: any, index: number) => {
-            const length = path.getTotalLength();
-            path.style.strokeDasharray = `${length} ${length}`;
-            path.style.strokeDashoffset = length;
-            path.style.setProperty('--path-length', length.toString());
-            // Let CSS animation handle opacity
-            path.style.animation = `drawLineFade 6s ease-in-out infinite`;
-            path.style.animationDelay = `${index * 0.3}s`;
-            
-            // Apply the same delay to the marker
-            const markerId = path.getAttribute('marker-end');
-            if (markerId) {
-              const cleanMarkerId = markerId.replace('url(#', '#').replace(')', '');
-              const marker = document.querySelector(cleanMarkerId);
-              if (marker) {
-                const markerPath = marker.querySelector('path');
-                if (markerPath) {
-                  markerPath.style.animationDelay = `${index * 0.3}s`;
-                }
-              }
-            }
-            
-            // Ensure markers are visible and animated
-            path.style.setProperty('--marker-opacity', '1');
-            
-            // Create a moving arrow element for each path
-            const arrowId = `moving-arrow-${index}`;
-            const pathId = `path-${index}`;
-            path.id = pathId;
-            
-            // Create a circle element that will move along the path
-            const movingArrow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            movingArrow.id = arrowId;
-            movingArrow.setAttribute('r', '0.3');
-            movingArrow.setAttribute('fill', path.getAttribute('stroke') || '#2563eb');
-            movingArrow.setAttribute('opacity', '0');
-            movingArrow.style.transition = 'opacity 0.2s ease';
-            
-            // Insert the moving arrow after the path
-            path.parentNode.insertBefore(movingArrow, path.nextSibling);
-          });
-          
-          // Add class to indicate animation has started
-          if (connectionSvgRef.current) {
-            connectionSvgRef.current.classList.add('animation-started');
-          }
-          
-          // Apply animation delays to text elements to match their corresponding arrows
-          setTimeout(() => {
-            const textElements = document.querySelectorAll('.line-text-values text');
-            textElements.forEach((textElement: any, index: number) => {
-              textElement.style.animation = `textFade 6s ease-in-out infinite`;
-              textElement.style.animationDelay = `${index * 0.3}s`;
-            });
-          }, 100);
-        } else {
-          // Retry after a short delay if paths aren't found
-          setTimeout(animatePaths, 200);
-        }
-      } else {
-        // Retry after a short delay
-        setTimeout(animatePaths, 200);
-      }
-    };
-
-    // Alternative CSS animation approach as fallback
-    const animateWithCSS = () => {
+    const timer = setTimeout(() => {
       if (connectionSvgRef.current) {
-        // Add class to indicate animation has started
-        connectionSvgRef.current.classList.add('animation-started');
-        
         const paths = connectionSvgRef.current.querySelectorAll('path');
+        console.log('Found paths:', paths.length);
+        
         paths.forEach((path: any, index: number) => {
           const length = path.getTotalLength();
-          path.style.strokeDasharray = `${length} ${length}`;
-          path.style.strokeDashoffset = length;
-          path.style.opacity = '0'; // Start hidden
-          path.style.setProperty('--path-length', length.toString());
-          path.style.animation = `drawLineFade 6s ease-in-out infinite`;
-          path.style.animationDelay = `${index * 0.3}s`;
+          console.log(`Path ${index} length:`, length);
           
-          // Apply the same delay to the marker
-          const markerId = path.getAttribute('marker-end');
-          if (markerId) {
-            const cleanMarkerId = markerId.replace('url(#', '#').replace(')', '');
-            const marker = document.querySelector(cleanMarkerId);
-            if (marker) {
-              const markerPath = marker.querySelector('path');
-              if (markerPath) {
-                markerPath.style.animationDelay = `${index * 0.3}s`;
-              }
-            }
-          }
+          // Set up dotted line animation with minimal spacing
+          const dotLength = 0.8; // Slightly larger dot
+          const gapLength = 0.5; // Minimal gap between dots
+          path.style.strokeDasharray = `${dotLength} ${gapLength}`;
+          path.style.strokeDashoffset = '0'; // Start from 0 for seamless loop
+          
+          // Add animation with staggered delay - faster animation
+          path.style.animation = `dashedLineMove 1s linear infinite`;
+          path.style.animationDelay = `${index * 0.05}s`;
+          
+          // Ensure the path is visible
+          path.style.opacity = '1';
+          
+          // Add a class for debugging
+          path.classList.add('animated-path');
         });
-        
-        // Apply animation delays to text elements to match their corresponding arrows
-        setTimeout(() => {
-          const textElements = document.querySelectorAll('.line-text-values text');
-          textElements.forEach((textElement: any, index: number) => {
-            textElement.style.animation = `textFade 6s ease-in-out infinite`;
-            textElement.style.animationDelay = `${index * 0.3}s`;
-          });
-        }, 100);
       }
-    };
+    }, 100);
 
-    // Try Anime.js first, then fallback to CSS
-    // Add a small delay to ensure initial state is set
-    const timer1 = setTimeout(animatePaths, 100);
-    const timer2 = setTimeout(animateWithCSS, 1500);
-    
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-    };
+    return () => clearTimeout(timer);
   }, []);
 
   // Financial amounts for each entity based on transfer pricing flows
@@ -792,102 +696,27 @@ export default function InteractiveIcFlow({
                 <path d="M2,2 L2,10 L10,6 z" fill="#ea580c" stroke="none" opacity="1" />
               </marker>
 
-              {/* Flow particles animation */}
-              <circle id="particle" r="2" fill="white" opacity="0.8">
-                <animate
-                  attributeName="opacity"
-                  values="0;0.8;0"
-                  dur="2s"
-                  repeatCount="indefinite"
-                />
-              </circle>
 
-              {/* Advanced animated patterns with morphing effects */}
+              {/* Dashed line animation styles */}
               <style>
                 {`
-                  @keyframes flow-primary {
-                    0% { 
-                      stroke-dashoffset: 0;
-                      filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.4));
+                  @keyframes dashedLineMove {
+                    0% {
+                      stroke-dashoffset: 1.3;
                     }
-                    50% { 
-                      filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.6));
-                    }
-                    100% { 
-                      stroke-dashoffset: -40;
-                      filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.4));
+                    100% {
+                      stroke-dashoffset: -1.3;
                     }
                   }
                   
-                  @keyframes flow-secondary {
-                    0% { 
-                      stroke-dashoffset: 0;
-                      filter: drop-shadow(0 0 6px rgba(55, 65, 81, 0.3));
-                    }
-                    50% { 
-                      filter: drop-shadow(0 0 10px rgba(55, 65, 81, 0.5));
-                    }
-                    100% { 
-                      stroke-dashoffset: -24;
-                      filter: drop-shadow(0 0 6px rgba(55, 65, 81, 0.3));
-                    }
-                  }
-                  
-                  @keyframes flow-tertiary {
-                    0% { 
-                      stroke-dashoffset: 0;
-                      filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.4));
-                    }
-                    50% { 
-                      filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.6));
-                    }
-                    100% { 
-                      stroke-dashoffset: -36;
-                      filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.4));
-                    }
-                  }
-                  
-                  @keyframes flow-quaternary {
-                    0% { 
-                      stroke-dashoffset: 0;
-                      filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.4));
-                    }
-                    50% { 
-                      filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.6));
-                    }
-                    100% { 
-                      stroke-dashoffset: -14;
-                      filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.4));
-                    }
-                  }
-
-                  @keyframes pulse-glow {
-                    0%, 100% { opacity: 0.6; }
-                    50% { opacity: 1; }
-                  }
-
-                  .ultra-line-primary {
-                    animation: flow-primary 4s linear infinite, pulse-glow 2s ease-in-out infinite;
+                  .dashed-line, .animated-path {
                     stroke-linecap: round;
                     stroke-linejoin: round;
                   }
                   
-                  .ultra-line-secondary {
-                    animation: flow-secondary 5s linear infinite, pulse-glow 2.5s ease-in-out infinite;
-                    stroke-linecap: round;
-                    stroke-linejoin: round;
-                  }
-                  
-                  .ultra-line-tertiary {
-                    animation: flow-tertiary 3.5s linear infinite, pulse-glow 2.2s ease-in-out infinite;
-                    stroke-linecap: round;
-                    stroke-linejoin: round;
-                  }
-                  
-                  .ultra-line-quaternary {
-                    animation: flow-quaternary 2.8s linear infinite, pulse-glow 1.8s ease-in-out infinite;
-                    stroke-linecap: round;
-                    stroke-linejoin: round;
+                  .animated-path {
+                    stroke-dasharray: 0.75 0.5 !important;
+                    animation: dashedLineMove 1s linear infinite !important;
                   }
                 `}
               </style>
@@ -1047,104 +876,116 @@ export default function InteractiveIcFlow({
             <path
               d="M 43 22 Q 35 15 25 40"
               stroke="#2563eb"
-              strokeWidth="0.2"
+              strokeWidth="0.15"
               fill="none"
               markerEnd="url(#arrow-blue-solid)"
               filter="url(#glow-blue)"
+              className="dashed-line"
             />
             {/* China → IPCo */}
             <path
               d="M 70 42 Q 60 25 43 22"
               stroke="#a855f7"
-              strokeWidth="0.2"
+              strokeWidth="0.15"
               fill="none"
               markerEnd="url(#arrow-purple)"
               filter="url(#glow-black)"
+              className="dashed-line"
             />
             {/* SG → IPCo */}
             <path
               d="M 75 55 Q 55 60 43 22"
               stroke="#a855f7"
-              strokeWidth="0.2"
+              strokeWidth="0.15"
               fill="none"
               markerEnd="url(#arrow-purple)"
               filter="url(#glow-black)"
+              className="dashed-line"
             />
             {/* Management Fees: HQ → China, SG, Japan, UK, Australia */}
             <path
               d="M 25 40 Q 20 15 42 20"
               stroke="#ea580c"
-              strokeWidth="0.2"
+              strokeWidth="0.15"
               fill="none"
               markerEnd="url(#arrow-orange)"
               filter="url(#glow-orange)"
+              className="dashed-line"
             />
             <path
               d="M 25 40 Q 10 10 46 17"
               stroke="#ea580c"
-              strokeWidth="0.2"
+              strokeWidth="0.15"
               fill="none"
               markerEnd="url(#arrow-orange)"
               filter="url(#glow-orange)"
+              className="dashed-line"
             />
             <path
               d="M 25 40 Q 50 5 82 42"
               stroke="#ea580c"
-              strokeWidth="0.2"
+              strokeWidth="0.15"
               fill="none"
               markerEnd="url(#arrow-orange)"
               filter="url(#glow-orange)"
+              className="dashed-line"
             />
             <path
               d="M 25 40 Q 50 90 80 75"
               stroke="#ea580c"
-              strokeWidth="0.2"
+              strokeWidth="0.15"
               fill="none"
               markerEnd="url(#arrow-orange)"
               filter="url(#glow-orange)"
+              className="dashed-line"
             />
             {/* USHQ → China */}
             <path
               d="M 25 40 Q 50 30 70 42"
               stroke="#ea580c"
-              strokeWidth="0.2"
+              strokeWidth="0.15"
               fill="none"
               markerEnd="url(#arrow-orange)"
               filter="url(#glow-orange)"
+              className="dashed-line"
             />
             {/* USHQ → SG */}
             <path
               d="M 25 40 Q 80 70 75 55"
               stroke="#ea580c"
-              strokeWidth="0.2"
+              strokeWidth="0.15"
               fill="none"
               markerEnd="url(#arrow-orange)"
               filter="url(#glow-orange)"
+              className="dashed-line"
             />
             {/* Resale Minus: Mfg → Distr */}
             <path
               d="M 75 55 Q 90 30 46 17"
               stroke="#059669"
-              strokeWidth="0.2"
+              strokeWidth="0.15"
               fill="none"
               markerEnd="url(#arrow-green)"
               filter="url(#glow-green)"
+              className="dashed-line"
             />
             <path
               d="M 75 55 Q 60 70 80 75"
               stroke="#059669"
-              strokeWidth="0.2"
+              strokeWidth="0.15"
               fill="none"
               markerEnd="url(#arrow-green)"
               filter="url(#glow-green)"
+              className="dashed-line"
             />
             <path
               d="M 75 55 Q 85 65 82 42"
               stroke="#059669"
-              strokeWidth="0.2"
+              strokeWidth="0.15"
               fill="none"
               markerEnd="url(#arrow-green)"
               filter="url(#glow-green)"
+              className="dashed-line"
             />
           </svg>
 
